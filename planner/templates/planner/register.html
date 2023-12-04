@@ -1,0 +1,40 @@
+{% extends 'planner/base.html' %}
+{% block body %}
+
+ <!-- ======= Hero Section ======= -->
+ <section id="hero" class="hero d-flex align-items-center">
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-5 py-4 mx-auto my-3" style="border-radius: 12px;border-color:blue;border-style: solid;">
+            <form method="POST" class="my-auto">
+              {% csrf_token %}
+              <div class="text-center h4 text-primary">Register</div>
+              {% if error_msg %}
+              <div class="text-center text-danger">{{error_msg}}</div>
+              {% endif %}
+              <div class="row">
+                <div class="col-lg-6 my-3">
+                  <input class="form-control" type="text" style="border-style:solid !important;border-width:thin !important;border-radius: 12px !important;border-color:orange !important;" name="first_name" placeholder="First Name: ">
+                </div>
+                <div class="col-lg-6 my-3">
+                  <input type="text" class="form-control" style="border-style:solid !important;border-width:thin !important;border-radius: 12px !important;border-color:orange !important;" name="last_name" placeholder="Last Name: ">
+                </div>
+                <div class="col-12 my-3">
+                  <input type="email" class="form-control" style="border-style:solid !important;border-width:thin !important;border-radius: 12px !important;border-color:orange !important;" name="email_address" placeholder="Email Address: ">
+                </div>
+                <div class="col-lg-6 my-3">
+                  <input type="password" class="form-control" style="border-style:solid !important;border-width:thin !important;border-radius: 12px !important;border-color:orange !important;" name="password1" placeholder="Password: ">
+                </div>
+                <div class="col-lg-6 my-3">
+                  <input type="password" class="form-control" style="border-style:solid !important;border-width:thin !important;border-radius: 12px !important;border-color:orange !important;" name="password2" placeholder="Repeat Password: ">
+                </div>
+                <button class="btn btn-primary mx-auto w-75 my-2" type="submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+  </section><!-- End Hero Section -->
+
+
+{% endblock %}

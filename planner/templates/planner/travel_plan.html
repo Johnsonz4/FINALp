@@ -1,0 +1,209 @@
+{% extends 'planner/base.html' %}
+{% block body %}
+
+<div class="w-100 py-5" style="background-color:#283c86;top:0;position:fixed;">
+    
+</div>
+
+
+
+<body id="page-top"  style="top:100px !important;position: relative !important;">
+
+  
+    <div id="wrapper">
+        <div id="content-wrapper" class="d-flex flex-column">
+
+                <div class="container-fluid" style="background-color: rgb(0,0,0,0.9);margin: 0!important;">
+          
+                    <div class="row py-4">
+                    <div class="col-lg-4 py-4 mx-auto my-2 " style="border-radius: 12px;">
+                        <div class="h5 text-center my-2 text-light">Title: {{travel_plan.title}}</div>
+                        <div class="d-flex justify-content-center">
+                            <div class="w-75 divider bg-secondary" style="height: 2px;"></div>
+                        </div>
+                        <div class="my-3 text-center text-light">
+                            <div>Destination:</div>
+                            <div class="my-2 text-center badge" style="font-size:1.0rem">
+                                <i class="fa fa-map-marker-alt text-warning px-2"></i>{{travel_plan.destination}}
+                            </div>
+                        </div>
+                        <div class="my-3 text-center text-light">
+                            <div>Travel Datetime:</div>
+                            <div class="my-3 text-center">
+                                <span class="bg-primary py-2 px-2"><i class="fa fa-calendar text-warning px-2"></i>{{travel_plan.travel_datetime}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 py-4 my-2" style="max-height: 70vh;overflow: auto;">
+                        <div class="h6 text-center text-light my-2">
+                            List of Travel Items
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <div class="divider w-75 bg-primary" style="height: 2px;"></div>
+                        </div>
+                        {% for item in travel_plan.travel_items.all %}
+                        <div class="card my-2 mx-auto">
+                            <div class="card-header d-flex justify-content-between">
+                                <span class="text-primary px-2" style="font-size:0.9rem"><i class="fa fa-bullseye px-2"></i>{{item.name}}</span>
+                                <span onclick="delete_travel_plan_item('{{item.id}}')"><i class="fa fa-trash text-danger"></i></span>
+                            </div>
+                            <div class="text-dark px-2 py-2" style="font-size: 0.7rem;">
+                                {{item.description}}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                      <div class="col-lg-4 py-4 mx-auto my-2 " style="border-radius: 12px;">
+                        <form id="item_form" method="POST" class="form-control my-auto card" onsubmit="add_travel_plan_item()">
+                          {% csrf_token %}
+                          <div class="text-center h5 text-primary mb-2">Add Travel Item</div>
+                          <div class="row">
+                            <div class="col-12 my-1">
+                              <label for="">Name</label>
+                              <input type="text" name="name" class="form-control" id="name_id" required>
+                            </div>
+                
+                            <div class="col-12 my-1">
+                              <label for="">Description</label>
+                              <textarea name="description" id="description_id" class="form-control" cols="30" rows="3"></textarea>
+                            </div>
+                
+                            <div class="col-12 my-2 d-flex justify-content-center my-3">
+                              <button class="btn btn-primary form-control" type="submit">Submit</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      
+
+
+                        
+                        
+                    </div>
+
+                    
+
+                </div>
+           
+
+            </div>
+        
+
+        </div>
+       
+
+    <!--Logout-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <script>
+      document.getElementById("item_form").addEventListener("submit", function(event){
+            event.preventDefault()
+        });
+    
+      function add_travel_plan_item(){
+          name = document.getElementById("name_id").value;
+          description = document.getElementById("description_id").value;
+          
+          $.ajax({
+            type: "POST",
+            url: '{% url "planner:add_travel_plan_item" %}',
+            dataType: "JSON",
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'travel_plan_id': '{{travel_plan.id}}',
+                'name': name,
+                'description':description,
+              },
+            success: function (data) {  
+              if (data["successful"] == "yes" ){
+                swal({
+                  title: "",
+                  text: 'Travel Item Added Successfully',
+                  icon: "success",
+                });
+                location.reload();
+                
+    
+              }
+              
+              else {
+                swal({
+                  title: "",
+                  text: 'Travel Item could not be created. Refresh page and try again',
+                  icon: "info",
+                });
+              }
+            }
+          });
+    
+    
+      }
+    
+      function delete_travel_plan_item(item_id){
+          $.ajax({
+            type: "POST",
+            url: '{% url "planner:delete_travel_plan_item" %}',
+            dataType: "JSON",
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'travel_plan_id': '{{travel_plan.id}}',
+                'travel_item_id': item_id,
+              },
+            success: function (data) {  
+              if (data["successful"] == "yes" ){
+                swal({
+                  title: "",
+                  text: 'Travel Item Deleted Successfully',
+                  icon: "success",
+                });
+                location.reload();
+                
+    
+              }
+              
+              else {
+                swal({
+                  title: "",
+                  text: 'Travel Item could not be deleted. Refresh page and try again',
+                  icon: "info",
+                });
+              }
+            }
+          });
+    
+    
+      }
+    
+    
+    
+    </script>
+
+</body>
+
+
+{% endblock %}

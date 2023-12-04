@@ -1,0 +1,18 @@
+{% extends 'planner/base.html' %}
+{% block body %}
+
+<div  class="h-100 w-100" style="z-index:90;position:absolute;top:0;background-image: linear-gradient(#283c86, #45a247);">
+    <div class="container-fluid">
+        <div class="row text-center d-flex justify-content-center py-3 my-5">
+            <div class="col-10">
+                <div class="card bg-primary mx-3 my-5 px-2">
+                    <div class="card-body">
+                        <div class="my-3"><span class="px-2 py-4 text-light">Account Registered  succesfully</span> <span><a href="{% url 'planner:login_user' %}"><span class="text-warning" style="font-weight: bold;">Login <i class="fa fa-arrow-right"></i></span></a></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

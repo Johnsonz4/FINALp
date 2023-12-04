@@ -1,0 +1,156 @@
+{% extends 'planner/base.html' %}
+{% block body %}
+
+<div class="w-100 py-5" style="background-color:#283c86;top:0;position:fixed;">
+    
+</div>
+
+
+
+<body id="page-top"  style="top:100px !important;position: relative !important;">
+
+    <div id="wrapper">
+    
+        <div id="content-wrapper" class="d-flex flex-column">
+                <div class="container-fluid" style="background-color: rgb(0,0,0,0.9);margin: 0!important;">
+          
+                    <div class="row py-4">
+                      <div class="col-lg-6 py-4 mx-auto my-2 " style="border-radius: 12px;">
+                        <form id="destination_form" method="POST" class="form-control my-auto card" onsubmit="create_travel_plan()">
+                          {% csrf_token %}
+                          <div class="text-center h5 text-primary mb-2">Create Travel Plan</div>
+                          <div class="row">
+                            <div class="col-12 my-1">
+                              <label for="">Title</label>
+                              <input type="text" name="title" class="form-control" id="title_id" required>
+                            </div>
+                
+                            <div class="col-12 my-1">
+                              <label for="">Destination</label>
+                              <input type="text" name="destination" class="form-control" id="destination_id" required>
+                            </div>
+                
+
+                            <div class="col-12 my-1">
+                              <label for="">Travelling Datetime</label>
+                              <input type="datetime-local" name="travel_datetime" class="form-control" id="travel_datetime_id" required>
+                            </div>
+                
+                            <div class="col-12 my-2 d-flex justify-content-center my-3">
+                              <button class="btn btn-primary form-control" type="submit">Submit</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="col-lg-6 py-4 mx-auto my-2 " style="border-radius: 12px;">
+                          <div class="h5 text-center my-2 text-light">List of my travel plans</div>
+                          <div class="d-flex justify-content-center">
+                            <div class="w-75 divider bg-secondary" style="height: 2px;"></div>
+                          </div>
+                          <div class="d-flex justify-content-center">
+                            <div class="w-75">
+                              {% for travel_plan in travel_plans %}
+                            <a class="my-3 d-flex justify-content-between" href="{% url 'planner:travel_plan'  travel_plan.id %}">
+                              <span class="text-light">
+                                {{travel_plan.title}}
+                              </span>
+                              <span>
+                                <i class="fa fa-arrow-right"></i>
+                              </span>
+                            </a>
+                            {% endfor %}
+                            </div>
+                          </div>
+                      </div>   
+                    </div>
+                </div>
+            </div>
+         </div>
+      
+
+    
+
+    <!-- Logout-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+ 
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="https://res.cloudinary.com/betsafe-kenya/raw/upload/v1671441062/tuokoelane%20dashboard/js/sb-admin-2.min_u3nawd.js"></script>
+    <script src="https://res.cloudinary.com/betsafe-kenya/raw/upload/v1671441074/tuokoelane%20dashboard/vendor/chart.js/Chart.min_kpwlpv.js"></script>
+    <script>
+      document.getElementById("destination_form").addEventListener("submit", function(event){
+            event.preventDefault()
+        });
+    
+      function create_travel_plan(){
+          title = document.getElementById("title_id").value;
+          destination = document.getElementById("destination_id").value;
+          travel_datetime = document.getElementById("travel_datetime_id").value;
+          
+          $.ajax({
+            type: "POST",
+            url: '{% url "planner:create_travel_plan" %}',
+            dataType: "JSON",
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'title': title,
+                'destination': destination,
+                'travel_datetime':travel_datetime,
+              },
+            success: function (data) {  
+              if (data["successful"] == "yes" ){
+                swal({
+                  title: "",
+                  text: 'Travel Plan Created Successfully',
+                  icon: "success",
+                });
+                travel_plan_id = data["travel_plan_id"]
+                current_url = window.location.href;
+                new_url = current_url.replace('/dashboard',  `/travel_plan/${travel_plan_id}`)
+                window.location.replace(new_url)
+    
+              }
+              
+              else {
+                swal({
+                  title: "",
+                  text: 'Travel plan could not be created. Refresh page and try again',
+                  icon: "info",
+                });
+              }
+            }
+          });
+    
+    
+      }
+    
+    
+    
+    </script>
+
+</body>
+
+
+{% endblock %}
